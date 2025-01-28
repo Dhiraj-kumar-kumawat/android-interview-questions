@@ -1,1 +1,109 @@
+Q1: What is an Android Activity? 
+Ans:  Activity = screen/page in your app
 
+Activity represents a single screen in Android. It contains all the user interface components (Button, TextInput etc.) in one screen. 
+An activity is a screen with which the user interacts.  
+Every Activity has its own UI and logic for user interactions. 
+To use activities in your app, you must register information about them in the app’s manifest 
+
+Q: Activity hierarchy? 
+
+Ans:  
+Java.lang.Object: The root class of all Java classes. 
+Android.content.Context: This is a subclass of Object and is a key part of Android's component model. Many Android components, including Activity, inherit from Context. 
+Android.content.ContextWrapper: A wrapper class around Context that allows for easier manipulation and delegation of context-related operations. 
+Android.app.Activity: The core class of Android’s activity lifecycle. It represents a single screen in an application and interacts with the Android OS to handle user interactions, lifecycle events, and more. 
+Android.app.FragmentActivity: A subclass of Activity that provides compatibility support for the Fragment class (before Android 3.0). In modern Android development, FragmentActivity has largely been replaced by AppCompatActivity in the context of modern UI support. 
+android.support.v7.app.AppCompatActivity (or androidx.appcompat.app.AppCompatActivity in recent versions): A subclass of FragmentActivity or Activity that provides support for modern Android UI features, including the ActionBar, and backward compatibility to older Android versions. 
+Androidx.activity.ComponentActivity: Introduced as a modern base class that supports modern Android components and optimizations for handling activities, with better integration of lifecycle and other architecture components. 
+android.app.Dialog (not commonly used directly): In some cases, activities may extend Dialog or interact with it, but it’s a specialized case. 
+
+Q: Differences between AppCompatActivity and ComponentActivity? 
+Ans: AppCompatActivity 
+Purpose: AppCompatActivity is a subclass of FragmentActivity that provides backward compatibility to features introduced in newer Android versions, specifically the support for the ActionBar and modern UI components. 
+Key Features: 
+ActionBar support: It allows you to use the ActionBar, which provides a standard interface element for displaying app titles, navigation, and action items (like buttons). 
+Backwards compatibility: Provides backward compatibility for Material Design, the ActionBar, and other UI elements on older Android versions (pre-Lollipop, i.e., API level 21 and below). 
+AppCompat Library: Part of the androidx.appcompat library, which is heavily used in modern Android apps for UI styling, theming, and compatibility with older Android versions. 
+Fragment support: Inherits from FragmentActivity, so it includes support for fragments, which are UI components that can be reused across different activities. 
+When to use: You’d typically use AppCompatActivity when you want to ensure compatibility across a wide range of Android versions and need to use classic UI elements like the ActionBar. 
+
+2. ComponentActivity 
+Purpose: ComponentActivity is a more modern and lightweight base class that was introduced to handle activities with better integration into the AndroidX libraries and Jetpack components. 
+Key Features: 
+Simplified: It’s a more simplified base class, designed with the newer architecture components and lifecycle libraries in mind. 
+No ActionBar by default: Unlike AppCompatActivity, ComponentActivity doesn't include ActionBar support by default. You can still add it manually, but the focus is on providing a simpler base activity that works well with newer UI components. 
+Jetpack & Lifecycle-aware: It is designed to integrate well with Jetpack libraries, like ViewModel, LiveData, LifecycleOwner, and others. 
+No backward compatibility support: Unlike AppCompatActivity, ComponentActivity does not come with automatic backward compatibility for legacy UI components like the ActionBar. This means it’s better suited for applications targeting modern Android versions (API 21+). 
+When to use: You’d typically use ComponentActivity if you're building a modern app using newer architecture components and don’t need to worry about backward compatibility or using the ActionBar. It's also useful if you're leveraging the newer ActivityResultContracts, Lifecycle, and other modern Android components. 
+
+
+Q2. What is the Android Activity Lifecycle, and why is it important? 
+Ans:  
+The Activity lifecycle consists of 7 methods: 
+onCreate() : When a user first opens an activity then the first method that gets called is called onCreate . It acts the same as a constructor of a class, then when an activity is instantiated then onCreate gets called. 
+onStart(): This method is called when an activity becomes visible to the user and is called after onCreate. 
+onResume(): It is called just before the user starts interacting with the application. 
+onPause(): It is called when the app is partially visible to the user on the mobile screen. 
+onStop(): It is called when the activity is no longer visible to the user. 
+onRestart(): It is called when the activity in the stopped state is about to start again. 
+onDestroy(): It is called when the activity is cleared from the application stack. 
+
+Q: What is the difference between setContentview() and addContentView() in android? 
+Ans:  
+setContentView() replaces the entire content of the activity. 
+addContentView() adds a view to the current content, keeping the existing layout intact. 
+
+
+Q: Which Lifecycle method will get called when a dialog appears in an activity? 
+Ans:  
+OnPause() is not called in all types of dialogs. 
+For Example, when an AlertDialog or DialogFragment is used, it will never call OnPause(), since they are a part of the activity. 
+However, if a dialog appears from System for a permission or some other app shows a Dialog over the activity it will only call OnPause() since a new activity isn't started and only the foreground focus is shifted from the activity to the Dialog Box. 
+The onPause() is called when your activity is no longer at the top of the activity stack. A Dialog by itself is not an Activity, so will not replace the current Activity at the top of the stack, so will not cause anything to pause. Displaying the dialog-as-an-Activity will cause the new Activity to be on the top of the stack, pausing what previously was there. 
+There are two more such scenarios when onPause() will get called. 
+Some event interrupts app execution such as receiving a phone call, the user’s navigating to another activity, or the device screen’s turning off. 
+In Android 7.0 (API level 24) or higher, multiple apps run in multi-window mode. Because only one of the apps (windows) has focus at any time, the system pauses all of the other apps. 
+
+ Q: When you start another activity from one activity, what lifecycle methods get called, and in what sequence? 
+
+Ans: 
+Activity Lifecycle: 
+When ActivityA is launched: 
+onCreate() – Called when the Activity is first created. Initialization like UI setup and variable initialization should happen here. 
+onStart() – Called when the Activity becomes visible to the user but may not be in the foreground yet. 
+onResume() – Called when the Activity comes to the foreground and becomes interactive with the user. 
+
+When ActivityA starts ActivityB: 
+
+onPause() – Called when ActivityA is no longer in the foreground, but it is still visible. ActivityA is paused while ActivityB is in the foreground. 
+
+ When ActivityB is launched: 
+
+onCreate() – Called when ActivityB is created. Set up any views, variables, or data specific to ActivityB here. 
+onStart() – Called when ActivityB is becoming visible to the user. 
+onResume() – Called when ActivityB is now fully in the foreground and interacting with the user. 
+
+When ActivityA is no longer visible (after launching ActivityB): 
+
+onStop() – Called when ActivityA is no longer visible to the user, which happens after ActivityB takes focus. 
+
+ 
+Q: What does the android:exported attribute in Android manifest specify? 
+
+Ans: In Android, the android:exported attribute is used in the AndroidManifest.xml file to specify whether an Activity, Service, BroadcastReceiver, or ContentProvider can be accessed by components outside of your application. 
+android:exported="true" 
+When this attribute is set to true, it means that the component can be accessed by other apps or components. It is exported and can be invoked by other apps or system services, provided that the necessary permissions or intent filters are set. 
+This is typically used for components that are meant to interact with other applications, like handling intents from other apps or providing public services. 
+
+In this example, MainActivity is marked as exported, meaning other apps or system components can potentially launch this activity, as long as they match the specified intent filters or have the appropriate permissions. 
+Why is this important? 
+In Android 12 (API level 31) and higher, components must explicitly declare whether they are exported using the android:exported attribute. If this is not specified, the app will not compile or install. This was introduced to improve security by preventing unintentional exposure of components that should not be accessible to other apps. 
+
+NOTE: A launchable activity must be exported as of Android 12. 
+
+ 
+
+ 
+
+ 
